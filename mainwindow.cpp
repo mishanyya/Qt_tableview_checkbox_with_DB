@@ -46,45 +46,22 @@ delete ui;
 
 void MainWindow::tableviewfunction(){//основная функция, выводящая таблицу в tableView
     //основная функция, выводящая таблицу
-    //подключить БД по ее адресу на компьютере
-    db.setDatabaseName("/home/mishanyya/fordbwork/examplebdfordbwork");
-    //открывает базу данных, указанную в db.setDatabaseName("/home/mishanyya/fordbwork/examplebdfordbwork");
-    db.open();
 
-    //создает объект для запросов SQL
-    QSqlQuery query( db );
-    //Общий код для QSqlTableModel, QSqlRelationalTableModel и QSqlQueryModel:
     //подключить БД по ее адресу на компьютере
     db.setDatabaseName("/home/mishanyya/databaseexample/examplebdfordbwork");
     //открывает базу данных, указанную в db.setDatabaseName("/home/mishanyya/databaseexample/examplebdfordbwork");
-
     db.open();
 
-    //создаем в бд таблицу со значениями типа integer 0
+    //СЛЕДУЕТ СОЗДАТЬ в таблице отдельное поле/колонку со значениями типа bool или integer
 
-    //QSqlQueryModel *model = new QSqlQueryModel; //создается глобальный объект модели таблицы только для чтения, checkboxы в ней тоже не нажимаются
     QSqlTableModel *model = new QSqlTableModel;
-
     model->setTable("basetable");//в модель помещается таблица из БД
+    model->select();
 
-model->select();
+    QTableView *tableView = ui->tableView;
+    CheckBoxDelegate *delegate = new CheckBoxDelegate();
 
-   //int countrows=model->rowCount();//кол-во строк
-    //int countcolumns;//кол-во колонок
-
-  //
-    //Создаем модель и представление
-      // QStandardItemModel *model = new QStandardItemModel(MODEL_ROWS, MODEL_COLUMN);
-       QTableView *tableView = ui->tableView;
-       CheckBoxDelegate *delegate = new CheckBoxDelegate();
-
-     /* for (int i=0;i<countrows ;i++ ) {
-   QModelIndex index = tableView->model()->index(i, columndelegatenumber, QModelIndex());//установка индекса - columndelegatenumber колонка в каждой строке
-      model->setData(index, QVariant(0));
-       }*/
-
-
-       //Устанавливаем модель в представление
+     //Устанавливаем модель в представление
        tableView->setModel(model);
        //Устанавливаем делегат в столбец
        tableView->setItemDelegateForColumn(columndelegatenumber, delegate);
@@ -95,9 +72,8 @@ model->select();
 }
 
 
-void MainWindow::forworktableview(){//получение значения ячейки в tableview через checkbox или radiobutton
+void MainWindow::forworktableview(){//получение значения ячейки в tableview через checkbox
 int countrows=ui->tableView->model()->rowCount();
-//int countcolumns=ui->tableView->model()->columnCount();
 
     //Получаем данные
     for (int row =0; row < countrows; ++row) {      
@@ -112,14 +88,8 @@ int countrows=ui->tableView->model()->rowCount();
                 QModelIndex index1 = ui->tableView->model()->index(row, 0, QModelIndex());//установка индекса - 0 колонка в каждой строке
                 QVariant value1=ui->tableView->model()->data(index1);//поместить в переменную значение ячейки
                 qDebug() << "выбрано значение = " << value1;
-//так как данные 0 и 1 сохраняются в БД, в дальнейшем их надо проверять в БД, хотя при удалении, может и не надо
-
+                //ВАЖНО:
+//так как данные 0 и 1 сохраняются в БД, в дальнейшем их надо проверять в таблице БД, хотя при удалении, может и не надо
             }
-
     }
 }
-/*QItemDelegate тебе нужен. Создаёшь потомка,
- * переназначаешь поведение отображения/редактирования для boolean-столбца,
- * устанавливаешь его в табличку.
- *  Примеры в документации, почти без изменений можно брать.*/
-
