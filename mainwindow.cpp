@@ -14,8 +14,12 @@
 #include "QDebug"
 
 
-
-int columndelegatenumber=5;//номер колонки для делегата, выбираем созданную таблицу в самой бд со значениями int 0
+//для СПОСОБА 1
+//int columndelegatenumber=5;//номер уже созданной колонки для делегата, выбираем созданную таблицу в самой бд со значениями int 0
+//для СПОСОБА 2
+int columndelegatenumber=0;//номер колонки для делегата, можно выбрать любую существующую колонку с другими значениями типа int, например
+//с порядковыми номерами ID
+//и программно заменить их в таблице на 0, при этом не сохраняя их в базе данных!
 
 /*для исправления ошибки QSqlDatabasePrivate::addDatabase: duplicate connection name 'qt_sql_default_connection', old connection removed
 подключать драйвер для БД (обычно доступно несколько драйверов, их список содержится в стандартном методе QSqlDatabase::drivers();)
@@ -52,14 +56,28 @@ void MainWindow::tableviewfunction(){//основная функция, выво
     //открывает базу данных, указанную в db.setDatabaseName("/home/mishanyya/databaseexample/examplebdfordbwork");
     db.open();
 
-    //СЛЕДУЕТ СОЗДАТЬ в таблице отдельное поле/колонку со значениями типа bool или integer
 
+
+    //СЛЕДУЕТ СОЗДАТЬ в таблице отдельное поле/колонку со значениями типа bool или integer
+    QTableView *tableView = ui->tableView;//выбрать объект tableView
     QSqlTableModel *model = new QSqlTableModel;
     model->setTable("basetable");//в модель помещается таблица из БД
-    model->select();
+    CheckBoxDelegate *delegate = new CheckBoxDelegate();//создать объекта делегата
 
-    QTableView *tableView = ui->tableView;
-    CheckBoxDelegate *delegate = new CheckBoxDelegate();
+    //СПОСОБ 1
+   //model->select();
+
+    //СПОСОБ 2
+
+model->setEditStrategy(QSqlTableModel::OnManualSubmit);//настраивается редактирование таблицы для внесения значений в столбец
+model->insertColumn(columndelegatenumber);//вставить новую колонку в модель, желательно после кода model->select();
+    model->select();
+     int countrows=model->rowCount();//кол-во строк
+       for (int i=0;i<countrows;++i ) {
+model->setData(model->index(i, columndelegatenumber),QVariant(0));
+       }
+
+
 
      //Устанавливаем модель в представление
        tableView->setModel(model);
@@ -85,7 +103,7 @@ int countrows=ui->tableView->model()->rowCount();
             //qDebug() << "информация = " << value;
 
             if(value==1){
-                QModelIndex index1 = ui->tableView->model()->index(row, 0, QModelIndex());//установка индекса - 0 колонка в каждой строке
+                QModelIndex index1 = ui->tableView->model()->index(row, 1, QModelIndex());//установка индекса - 1 колонка в каждой строке
                 QVariant value1=ui->tableView->model()->data(index1);//поместить в переменную значение ячейки
                 qDebug() << "выбрано значение = " << value1;
                 //ВАЖНО:

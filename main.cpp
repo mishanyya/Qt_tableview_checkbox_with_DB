@@ -1,9 +1,7 @@
 #include "mainwindow.h"
 #include "delegate.h"
 #include "QApplication"
-#include "QStandardItemModel"
-#include "QHeaderView"
-#include "QTableView"
+
 
 
 
