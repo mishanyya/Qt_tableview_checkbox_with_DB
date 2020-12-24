@@ -67,10 +67,8 @@ void MainWindow::tableviewfunction(){//основная функция, выво
     //СПОСОБ 1
    //model->select();
 
-    //СПОСОБ 2
-
+    //СПОСОБ 2, Более предпочтительный!
 model->setEditStrategy(QSqlTableModel::OnManualSubmit);//настраивается редактирование таблицы для внесения значений в столбец
-model->insertColumn(columndelegatenumber);//вставить новую колонку в модель, желательно после кода model->select();
     model->select();
      int countrows=model->rowCount();//кол-во строк
        for (int i=0;i<countrows;++i ) {
